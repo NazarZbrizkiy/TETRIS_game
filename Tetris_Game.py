@@ -32,6 +32,7 @@ class Tetris:
         self.field = [[None] * self.FIELD_WIDTH for _ in range(self.FIELD_HEIGHT)]
         self.game_over = False
         self.new_shape()
+        self.draw()
         self.root.mainloop()
 
     def new_shape(self):
@@ -46,6 +47,33 @@ class Tetris:
         if not self.is_valid_move(self.current_x, self.current_y):
             self.game_over = True
             self.root.destroy()
+
+    def draw(self):
+        # Clear the canvas
+        self.canvas.delete('all')
+
+        # Draw fixed blocks
+        for y, row in enumerate(self.field):
+            for x, cell in enumerate(row):
+                if cell:
+                    self.canvas.create_rectangle(
+                        x * self.BLOCK_SIZE, y * self.BLOCK_SIZE,
+                        (x + 1) * self.BLOCK_SIZE, (y + 1) * self.BLOCK_SIZE,
+                        fill=cell, outline='gray'
+                    )
+
+        # Draw the current shape
+        if self.current_shape:
+            for y, row in enumerate(self.current_shape):
+                for x, cell in enumerate(row):
+                    if cell:
+                        self.canvas.create_rectangle(
+                            (self.current_x + x) * self.BLOCK_SIZE,
+                            (self.current_y + y) * self.BLOCK_SIZE,
+                            (self.current_x + x + 1) * self.BLOCK_SIZE,
+                            (self.current_y + y + 1) * self.BLOCK_SIZE,
+                            fill=self.current_color, outline='gray'
+                        )
 
     def is_valid_move(self, new_x, new_y, shape=None):
         # Check if the move is valid
