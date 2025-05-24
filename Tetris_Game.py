@@ -28,6 +28,13 @@ class Tetris:
         )
         self.canvas.pack(padx=10, pady=10)
 
+        # Bind keys for controls
+        self.root.bind('<Left>', lambda e: self.move(-1, 0))
+        self.root.bind('<Right>', lambda e: self.move(1, 0))
+        self.root.bind('<Down>', lambda e: self.move(0, 1))
+        self.root.bind('<Up>', lambda e: self.rotate())
+        self.root.bind('<space>', lambda e: self.drop())
+
         # Initialize the game field and state
         self.field = [[None] * self.FIELD_WIDTH for _ in range(self.FIELD_HEIGHT)]
         self.game_over = False
@@ -88,6 +95,30 @@ class Tetris:
                             (new_y + y >= 0 and self.field[new_y + y][new_x + x] is not None)):
                         return False
         return True
+
+    def move(self, dx, dy):
+        # Move the shape
+        if not self.game_over and self.is_valid_move(self.current_x + dx, self.current_y + dy):
+            self.current_x += dx
+            self.current_y += dy
+            self.draw()
+
+    def rotate(self):
+        # Rotate the shape
+        if self.game_over:
+            return
+        new_shape = list(zip(*reversed(self.current_shape)))
+        if self.is_valid_move(self.current_xovich, self.current_y, new_shape):
+            self.current_shape = new_shape
+            self.draw()
+
+    def drop(self):
+        # Drop the shape to the bottom
+        if self.game_over:
+            return
+        while self.is_valid_move(self.current_x, self.current_y + 1):
+            self.current_y += 1
+        self.draw()
 
 if __name__ == '__main__':
     Tetris()
