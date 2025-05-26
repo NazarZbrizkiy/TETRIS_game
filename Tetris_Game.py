@@ -39,7 +39,7 @@ class Tetris:
         self.field = [[None] * self.FIELD_WIDTH for _ in range(self.FIELD_HEIGHT)]
         self.game_over = False
         self.new_shape()
-        self.draw()
+        self.update()
         self.root.mainloop()
 
     def new_shape(self):
@@ -108,7 +108,7 @@ class Tetris:
         if self.game_over:
             return
         new_shape = list(zip(*reversed(self.current_shape)))
-        if self.is_valid_move(self.current_xovich, self.current_y, new_shape):
+        if self.is_valid_move(self.current_x, self.current_y, new_shape):
             self.current_shape = new_shape
             self.draw()
 
@@ -118,7 +118,34 @@ class Tetris:
             return
         while self.is_valid_move(self.current_x, self.current_y + 1):
             self.current_y += 1
+        self.freeze()
+
+    def freeze(self):
+        # Freeze the shape in place
+        for y, row in enumerate(self.current_shape):
+            for x, cell in enumerate(row):
+                if cell:
+                    self.field[self.current_y + y][self.current_x + x] = self.current_color
+        self.remove_full_lines()
+        self.new_shape()
         self.draw()
+
+    def remove_full_lines(self):
+        # Remove completed lines
+        new_field = [row for row in self.field if not all(cell is not None for cell in row)]
+        while len(new_field) < self.FIELD_HEIGHT:
+            new_field.insert(0, [None] * self.FIELD_WIDTH)
+        self.field = new_field
+
+    def update(self):
+        # Update the game state
+        if not self.game_over:
+            if not self.is_valid_move(self.current_x, self.current_y + 1):
+                self.freeze()
+            else:
+                self.current_y += 1
+            self.draw()
+            self.root.after(500, self.update)
 
 if __name__ == '__main__':
     Tetris()
