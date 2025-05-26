@@ -1,6 +1,7 @@
 import tkinter as tk
 import random
 
+
 class Tetris:
     FIELD_WIDTH = 10
     FIELD_HEIGHT = 20
@@ -35,6 +36,11 @@ class Tetris:
         self.root.bind('<Up>', lambda e: self.rotate())
         self.root.bind('<space>', lambda e: self.drop())
 
+        self.root.bind('<a>', lambda e: self.move(-1, 0))
+        self.root.bind('<d>', lambda e: self.move(1, 0))
+        self.root.bind('<s>', lambda e: self.move(0, 1))
+        self.root.bind('<w>', lambda e: self.rotate())
+        self.root.bind('<space>', lambda e: self.drop())
         # Initialize the game field and state
         self.field = [[None] * self.FIELD_WIDTH for _ in range(self.FIELD_HEIGHT)]
         self.game_over = False
@@ -146,6 +152,7 @@ class Tetris:
                 self.current_y += 1
             self.draw()
             self.root.after(500, self.update)
+
 
 if __name__ == '__main__':
     Tetris()
